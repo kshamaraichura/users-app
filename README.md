@@ -4,7 +4,7 @@
 
 User management app is used to perform CRUD operations on user data (name, data of birth, email and phone).
 
-## To be installed
+## Prerequisites
 
 -   [Mongo](https://www.mongodb.com/)
 -   [ExpressJS](https://expressjs.com/)
