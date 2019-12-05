@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
+import {connect} from "react-redux"
 import ReactTable from 'react-table'
-import api from '../api'
 
 import styled from 'styled-components'
 
 import 'react-table/react-table.css'
+import {deleteUser, getAllUsers} from "../action"
 
 const Wrapper = styled.div`
     text-align: center;
@@ -33,17 +34,16 @@ class UpdateUser extends Component {
     }
 }
 
-class DeleteUser extends Component {
+class DeleteUserComponent extends Component {
     deleteUser = event => {
         event.preventDefault()
 
         if (
           window.confirm(
-            `Do tou want to delete the user ${this.props.id} permanently?`,
+            `Do you want to delete the user ${this.props.id} permanently?`,
           )
         ) {
-            api.deleteUserById(this.props.id)
-            window.location.reload()
+            this.props.deleteUser(this.props.id)
         }
     }
 
@@ -52,25 +52,29 @@ class DeleteUser extends Component {
     }
 }
 
+const mapDispatchToPropsDeleteUser = dispatch => ({
+    deleteUser: (id) => dispatch(deleteUser(id))
+})
+
+const DeleteUser = connect(undefined, mapDispatchToPropsDeleteUser)(DeleteUserComponent)
+
 class UsersList extends Component {
     constructor(props) {
         super(props)
+        const userList = props.user && props.user.list && props.user.list.success
+        const isLoading = props.user && props.user.list && props.user.list.isLoading
         this.state = {
-            users: [],
+            users: userList || [],
             columns: [],
-            isLoading: false,
+            isLoading: isLoading,
         }
     }
 
-    componentDidMount = async () => {
-        this.setState({isLoading: true})
-
-        await api.getAllUsers().then(users => {
-            this.setState({
-                users: users.data.data,
-                isLoading: false,
-            })
-        })
+    componentWillReceiveProps(nextProps, nextContext) {
+        const {user} = nextProps
+        const userList = user && user.list && user.list.success
+        const isLoading = user && user.list && user.list.isLoading
+        this.setState({users: userList || [], isLoading})
     }
 
     render() {
@@ -149,4 +153,12 @@ class UsersList extends Component {
     }
 }
 
-export default UsersList
+const mapStateToProps = state => ({
+    ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+    getAllUsers: () => dispatch(getAllUsers())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UsersList)

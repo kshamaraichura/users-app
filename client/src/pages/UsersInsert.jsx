@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import api from '../api'
 
 import styled from 'styled-components'
+import {insertUser} from "../action"
+import {connect} from "react-redux"
 
 const Title = styled.h1.attrs({
   className: 'h1',
@@ -75,16 +76,14 @@ class UsersInsert extends Component {
     const {name, dob, email, phone} = this.state
     const payload = {name, dob, email, phone}
 
-    await api.insertUser(payload).then(res => {
-      window.alert(`User inserted successfully`)
-      this.setState({
-        name: '',
-        dob: '',
-        email: '',
-        phone: '',
-      })
-      window.location.href = '/'
+    this.props.insertUser(payload)
+    this.setState({
+      name: '',
+      dob: '',
+      email: '',
+      phone: '',
     })
+    window.location.href = '/'
   }
 
   render() {
@@ -130,4 +129,12 @@ class UsersInsert extends Component {
   }
 }
 
-export default UsersInsert
+const mapStateToProps = state => ({
+  ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+  insertUser: (payload) => dispatch(insertUser(payload))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UsersInsert)
