@@ -36,6 +36,6 @@ $ nodemon index.js
 ```
 $ cd users-app
 $ cd client
-$ yarn install
+$ yarn install --pure-lockfile
 $ yarn start
 ```
