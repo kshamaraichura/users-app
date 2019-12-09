@@ -3,6 +3,8 @@ import api from '../api'
 
 import styled from 'styled-components'
 import {formatDate} from "../utils"
+import {updateUser} from "../action"
+import {connect} from "react-redux"
 
 const Title = styled.h1.attrs({
     className: 'h1',
@@ -77,16 +79,14 @@ class UsersUpdate extends Component {
         const { id, name, dob, email, phone } = this.state
         const payload = { name, dob, email, phone }
 
-        await api.updateUserById(id, payload).then(res => {
-            window.alert(`User updated successfully`)
-            this.setState({
-                name: '',
-                dob: '',
-                email: '',
-                phone: '',
-            })
-            window.location.href = '/'
+        this.props.updateUser(id, payload)
+        this.setState({
+            name: '',
+            dob: '',
+            email: '',
+            phone: '',
         })
+        window.location.href = '/'
     }
 
     componentDidMount = async () => {
@@ -146,4 +146,12 @@ class UsersUpdate extends Component {
     }
 }
 
-export default UsersUpdate
+const mapStateToProps = state => ({
+    ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+    updateUser: (id, payload) => dispatch(updateUser(id, payload))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UsersUpdate)

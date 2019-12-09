@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import {getAllUsers} from "../action"
+import {connect} from "react-redux"
 
 const Collapse = styled.div.attrs({
     className: 'collpase navbar-collapse',
@@ -15,16 +17,20 @@ const Item = styled.div.attrs({
 })``
 
 class Links extends Component {
+    componentDidMount = () => {
+        this.props.getAllUsers()
+    }
+
     render() {
         return (
             <React.Fragment>
-                <Link to="/" className="navbar-brand">
+                <Link to="/" className="navbar-brand" onClick={() => this.props.getAllUsers()}>
                     User management application
                 </Link>
                 <Collapse>
                     <List>
                         <Item>
-                            <Link to="/users/list" className="nav-link">
+                            <Link to="/users/list" className="nav-link" onClick={() => this.props.getAllUsers()}>
                                 List Users
                             </Link>
                         </Item>
@@ -40,4 +46,12 @@ class Links extends Component {
     }
 }
 
-export default Links
+const mapStateToProps = state => ({
+    ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+    getAllUsers: () => dispatch(getAllUsers())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Links)
